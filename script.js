@@ -28,9 +28,6 @@ window.addEventListener('click', function(e) {
 			selectedPairOfCards.forEach(function(key) {
 				console.log(key);
 				key.setAttribute('disabled', '');
-				//let child = key.querySelector('p');
-				//console.log(child);
-				//child.setAttribute('disabled', '');
 				})
 			console.log(selectedPairOfCards);
 		} else if (firstCardValue && !secondCardValue) {
@@ -40,7 +37,6 @@ window.addEventListener('click', function(e) {
 			secondCardValue = +e.target.querySelector('.card__value').textContent;
 			console.log(secondCardValue);
 			selectedPairOfCards.push(secondCardItem);
-
 			console.log(selectedPairOfCards);
 			if (firstCardId === secondCardId) {
 				const idList = document.querySelectorAll(`[data-id]`);
@@ -51,13 +47,10 @@ window.addEventListener('click', function(e) {
 				})
 				console.log(idList);
 				reset();
-
 			} else {
-
 				firstCardItem.querySelector('.card__value').classList.remove('hidden');
 				secondCardItem.querySelector('.card__value').classList.remove('hidden');
 				reset();
-				
 			}
 		} else if (firstCardValue && secondCardValue) {
 
@@ -73,7 +66,7 @@ function render() {
 	for (let i = 0; i < mainArray.length; i++) {
 		wrapper.insertAdjacentHTML('beforeend', `
 		<button class='card' data-id='${mainArray[i]}'>
-			<input type='button' disabled class='card__value hidden'>${mainArray[i]}</input>
+			<input type="button" value='${mainArray[i]}' disabled class='card__value hidden'>
 		</button>
 		`)
 	}

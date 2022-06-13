@@ -1,10 +1,8 @@
-const cards = 10; // quantity pairs of cards. May be in range between 2 and 100, and multiple of ten ( 10, 20, 30, 40, 50...)
-const card = document.querySelectorAll('.card');
+const cards = 30; // quantity pairs of cards. May be in range between 2 and 100, and multiple of ten ( 10, 20, 30, 40, 50...)
+
 
 let mainArray;			// Generated random array
 let foundArray;	// Array of founded values
-let firstCardValue = '';
-let secondCardValue = '';
 let firstCardId;		
 let secondCardId;		
 let firstCardItem;		// First selected card
@@ -18,21 +16,21 @@ window.addEventListener('click', function(e) {
 	firstCardItem = e.target.closest('.card');
 	secondCardItem = e.target.closest('.card');
 	if (e.target.closest('.card')) {
-		if (!firstCardValue) {
+		if (!firstCardId) {
 			firstCardItem.querySelector('.card__value').classList.toggle('hidden');
 			firstCardId = firstCardItem.dataset.id;
-			firstCardValue = +e.target.querySelector('.card__value').value;
 			selectedPairOfCards.push(firstCardItem);
 			selectedPairOfCards.forEach(function(key) {
 				key.setAttribute('disabled', '');
+				key.classList.add('selected');
 			})
 		} else {
 			secondCardItem.querySelector('.card__value').classList.toggle('hidden');
 			secondCardId = secondCardItem.dataset.id;
-			secondCardValue = +e.target.querySelector('.card__value').value;
 			selectedPairOfCards.push(secondCardItem);
 			selectedPairOfCards.forEach(function(key) {
 				key.setAttribute('disabled', '');
+				key.classList.add('selected');
 			})
 			if (firstCardId === secondCardId) {
 				const idList = document.querySelectorAll(`[data-id]`);
@@ -41,13 +39,7 @@ window.addEventListener('click', function(e) {
 						key.classList.add('found');
 					}
 				})	
-				selectedPairOfCards.forEach(function(key) {
-					//foundArray.push(key);
-				});
 				foundArray = document.querySelectorAll('.found');	
-				console.log(foundArray.length);
-				console.log(foundArray);
-				
 				if (foundArray.length === cards) {
 					const wrapper = document.querySelector('.wrapper');
 					console.log(wrapper);
@@ -76,6 +68,7 @@ window.addEventListener('click', function(e) {
 				setTimeout(function() {
 					selectedPairOfCards.forEach(function(key) {
 						key.removeAttribute('disabled', '');
+						key.classList.remove('selected');
 						})
 					selectedPairOfCards.length = 0;
 				}, 400)
@@ -91,10 +84,19 @@ function render() {
 	for (let i = 0; i < mainArray.length; i++) {
 		cardsWrapper.insertAdjacentHTML('beforeend', `
 		<button class='card' data-id='${mainArray[i]}'>
-			<input type="button" value='${mainArray[i]}' disabled class='card__value hidden'>
+			<input type="button" value='${mainArray[i]}' disabled class='card__value'>
 		</button>
 		`)
 	}
+	hiddenTimeout();
+}
+
+function hiddenTimeout() {
+	setTimeout(function() {
+		document.querySelectorAll('.card__value').forEach(function(key) {
+			key.classList.add('hidden');
+		})
+	}, 5000);
 }
 
 function generateArrayOfPairs() {
@@ -121,8 +123,6 @@ function generateArrayOfPairs() {
 }
 
 function reset() {
-	firstCardValue = '';
-	secondCardValue = '';
 	firstCardItem = '';
 	secondCardItem = '';
 	firstCardId = '';

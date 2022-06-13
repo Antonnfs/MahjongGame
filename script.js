@@ -1,8 +1,8 @@
-const cards = 30; // quantity pairs of cards;  May be in range beetween 2 and 50;
+const cards = 10; // quantity pairs of cards. May be in range between 2 and 100, and multiple of ten ( 10, 20, 30, 40, 50...)
 const card = document.querySelectorAll('.card');
 
-let mainArray;			// Generated randjm array
-let foundArray = [];		// Array of founded values
+let mainArray;			// Generated random array
+let foundArray;	// Array of founded values
 let firstCardValue = '';
 let secondCardValue = '';
 let firstCardId;		
@@ -18,53 +18,78 @@ window.addEventListener('click', function(e) {
 	firstCardItem = e.target.closest('.card');
 	secondCardItem = e.target.closest('.card');
 	if (e.target.closest('.card')) {
-		if (!firstCardValue && !secondCardValue) {
+		if (!firstCardValue) {
 			firstCardItem.querySelector('.card__value').classList.toggle('hidden');
 			firstCardId = firstCardItem.dataset.id;
-			console.log(`first id: ${firstCardId}`);
-			firstCardValue = +e.target.querySelector('.card__value').textContent;
-			console.log(firstCardValue);
+			firstCardValue = +e.target.querySelector('.card__value').value;
 			selectedPairOfCards.push(firstCardItem);
 			selectedPairOfCards.forEach(function(key) {
-				console.log(key);
 				key.setAttribute('disabled', '');
-				})
-			console.log(selectedPairOfCards);
-		} else if (firstCardValue && !secondCardValue) {
+			})
+		} else {
 			secondCardItem.querySelector('.card__value').classList.toggle('hidden');
 			secondCardId = secondCardItem.dataset.id;
-			console.log(`second id: ${secondCardId}`);
-			secondCardValue = +e.target.querySelector('.card__value').textContent;
-			console.log(secondCardValue);
+			secondCardValue = +e.target.querySelector('.card__value').value;
 			selectedPairOfCards.push(secondCardItem);
-			console.log(selectedPairOfCards);
+			selectedPairOfCards.forEach(function(key) {
+				key.setAttribute('disabled', '');
+			})
 			if (firstCardId === secondCardId) {
 				const idList = document.querySelectorAll(`[data-id]`);
 				idList.forEach(function(key) {
 					if (key.dataset.id === secondCardId) {
 						key.classList.add('found');
 					}
-				})
-				console.log(idList);
-				reset();
+				})	
+				selectedPairOfCards.forEach(function(key) {
+					//foundArray.push(key);
+				});
+				foundArray = document.querySelectorAll('.found');	
+				console.log(foundArray.length);
+				console.log(foundArray);
+				
+				if (foundArray.length === cards) {
+					const wrapper = document.querySelector('.wrapper');
+					console.log(wrapper);
+					wrapper.insertAdjacentHTML('beforeend', `
+						<div class="popup">
+							<div class="popup__wrapper">
+								<div class="popup__content">
+									<div class="popup__text">
+										You win!
+										Your score: 
+									</div>
+									<button class="popup__button" onClick="window.location.reload();">Restart!</button>
+								</div>
+							</div>
+						</div>
+					`)
+					console.log(foundArray.length);
+					
+				}
 			} else {
-				firstCardItem.querySelector('.card__value').classList.remove('hidden');
-				secondCardItem.querySelector('.card__value').classList.remove('hidden');
-				reset();
+				setTimeout(function() {
+					selectedPairOfCards.forEach(function(key) {
+						key.querySelector('.card__value').classList.toggle('hidden');
+					})
+				}, 400)
+				setTimeout(function() {
+					selectedPairOfCards.forEach(function(key) {
+						key.removeAttribute('disabled', '');
+						})
+					selectedPairOfCards.length = 0;
+				}, 400)
 			}
-		} else if (firstCardValue && secondCardValue) {
-
-		
-		}
+			reset();
+		} 
 	}
 })
 
-
 function render() {
 	mainArray = generateArrayOfPairs();
-	const wrapper = document.querySelector('.cards-wrapper');
+	const cardsWrapper = document.querySelector('.cards-wrapper');
 	for (let i = 0; i < mainArray.length; i++) {
-		wrapper.insertAdjacentHTML('beforeend', `
+		cardsWrapper.insertAdjacentHTML('beforeend', `
 		<button class='card' data-id='${mainArray[i]}'>
 			<input type="button" value='${mainArray[i]}' disabled class='card__value hidden'>
 		</button>
@@ -96,19 +121,10 @@ function generateArrayOfPairs() {
 }
 
 function reset() {
-	setTimeout(resetItems(), 500)
-	function resetItems() {
-		firstCardValue = '';
-		secondCardValue = '';
-		firstCardItem = '';
-		secondCardItem = '';
-		console.log(firstCardValue);
-		console.log(secondCardValue);
-		console.log(firstCardItem);
-		console.log(secondCardItem);
-		console.log(`first id: ${firstCardId}`);
-		console.log(`second id: ${secondCardId}`);
-
-	}
-	console.log('reset');
+	firstCardValue = '';
+	secondCardValue = '';
+	firstCardItem = '';
+	secondCardItem = '';
+	firstCardId = '';
+	secondCardId = '';
 }

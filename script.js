@@ -1,20 +1,44 @@
-const cards = 30; // quantity pairs of cards. May be in range between 2 and 100, and multiple of ten ( 10, 20, 30, 40, 50...)
+let cards = 30; // quantity pairs of cards. May be in range between 2 and 100, and multiple of ten ( 10, 20, 30, 40, 50...)
 
+let seconds = 0;
+let minutes = 0;
+let interval;
+let result = [];
 
-let mainArray;			// Generated random array
-let foundArray;	// Array of founded values
 let firstCardId;		
-let secondCardId;		
-let firstCardItem;		// First selected card
-let secondCardItem;		// Second selected card
-let selectedPairOfCards = [];		// Array with selected pair of cards
+let secondCardId;
+let startButton = document.querySelector('.start-button');	
+const cardsWrapper = document.querySelector('.cards-wrapper');	
+const selectedPairOfCards = [];		// Array with selected pair of cards
 
+//startRender();
+startTimer();
 render();
+function startTimer() {
+	setTimeout(() => {
+		clearInterval(interval);
+		interval = setInterval(setTimer, 1000)
+	}, 4500)
+}
 
-console.log(mainArray);
+
+
 window.addEventListener('click', function(e) {
-	firstCardItem = e.target.closest('.card');
-	secondCardItem = e.target.closest('.card');
+	if (e.target.closest('.start-button')) {
+		
+		
+	}
+})
+
+// Timer
+const timer = document.querySelector('.timer');
+const minutesElement = document.querySelector('.timer__minutes');
+const secondsElement = document.querySelector('.timer__seconds');
+
+
+window.addEventListener('click', function(e) {
+	let firstCardItem = e.target.closest('.card');		// First selected card
+	let secondCardItem = e.target.closest('.card');		// Second selected card
 	if (e.target.closest('.card')) {
 		if (!firstCardId) {
 			firstCardItem.querySelector('.card__value').classList.toggle('hidden');
@@ -23,6 +47,7 @@ window.addEventListener('click', function(e) {
 			selectedPairOfCards.forEach(function(key) {
 				key.setAttribute('disabled', '');
 				key.classList.add('selected');
+				key.style.background = 'rgb(255, 255, 255)';
 			})
 		} else {
 			secondCardItem.querySelector('.card__value').classList.toggle('hidden');
@@ -31,6 +56,7 @@ window.addEventListener('click', function(e) {
 			selectedPairOfCards.forEach(function(key) {
 				key.setAttribute('disabled', '');
 				key.classList.add('selected');
+				key.style.background = 'rgb(255, 255, 255)';
 			})
 			if (firstCardId === secondCardId) {
 				const idList = document.querySelectorAll(`[data-id]`);
@@ -39,30 +65,31 @@ window.addEventListener('click', function(e) {
 						key.classList.add('found');
 					}
 				})	
-				foundArray = document.querySelectorAll('.found');	
-				if (foundArray.length === cards) {
+				const foundList = document.querySelectorAll('.found');	// List of found values
+				if (foundList.length === cards) {
+					clearInterval(interval);
+					timer.childNodes.forEach((key) => result.push(key.textContent));
+					result = result.join('');
 					const wrapper = document.querySelector('.wrapper');
-					console.log(wrapper);
-					wrapper.insertAdjacentHTML('beforeend', `
+					wrapper.insertAdjacentHTML('beforeend', `			
 						<div class="popup">
 							<div class="popup__wrapper">
 								<div class="popup__content">
-									<div class="popup__text">
-										You win!
-										Your score: 
-									</div>
+									<h1 class="popup__title">You win!</h1>
+									<p class="popup__text">
+										Your result: ${result}
+									</p>
 									<button class="popup__button" onClick="window.location.reload();">Restart!</button>
 								</div>
 							</div>
 						</div>
 					`)
-					console.log(foundArray.length);
-					
 				}
 			} else {
 				setTimeout(function() {
 					selectedPairOfCards.forEach(function(key) {
 						key.querySelector('.card__value').classList.toggle('hidden');
+						key.style.background = "url('../img/card.jpeg') center / cover no-repeat";
 					})
 				}, 400)
 				setTimeout(function() {
@@ -73,14 +100,30 @@ window.addEventListener('click', function(e) {
 					selectedPairOfCards.length = 0;
 				}, 400)
 			}
-			reset();
+			// Reset
+			firstCardItem = '';
+			secondCardItem = '';
+			firstCardId = '';
+			secondCardId = '';
 		} 
 	}
 })
 
+function startRender() {
+	cardsWrapper.insertAdjacentHTML('beforeend', `
+		<button class='start-button'>Start!</button>
+	`) 
+}
+
 function render() {
-	mainArray = generateArrayOfPairs();
-	const cardsWrapper = document.querySelector('.cards-wrapper');
+	let mainArray = generateRandomArray();		// Generated random array
+	cardsWrapper.innerHTML = `
+		<div class="timer">
+			<span class="timer__minutes">00</span>
+			<span> : </span>
+			<span class="timer__seconds">00</span>
+		</div>
+	`
 	for (let i = 0; i < mainArray.length; i++) {
 		cardsWrapper.insertAdjacentHTML('beforeend', `
 		<button class='card' data-id='${mainArray[i]}'>
@@ -88,18 +131,21 @@ function render() {
 		</button>
 		`)
 	}
-	hiddenTimeout();
+	hideValuesTimeout();
 }
 
-function hiddenTimeout() {
+function hideValuesTimeout() {
 	setTimeout(function() {
 		document.querySelectorAll('.card__value').forEach(function(key) {
 			key.classList.add('hidden');
 		})
+		document.querySelectorAll('.card').forEach(function(key) {
+			key.style.background = "url('../img/card.jpeg') center / cover no-repeat";
+		})
 	}, 5000);
 }
 
-function generateArrayOfPairs() {
+function generateRandomArray() {
 	let array = [];
 	let a = 1; // from number
 	let b = 50; // to number
@@ -122,9 +168,25 @@ function generateArrayOfPairs() {
 	}
 }
 
-function reset() {
-	firstCardItem = '';
-	secondCardItem = '';
-	firstCardId = '';
-	secondCardId = '';
-}
+function setTimer() {
+	seconds++;
+	if (seconds < 10) {
+		secondsElement.innerText = '0' + seconds;
+	} 
+	if (seconds > 9 && seconds < 59) {
+		secondsElement.innerText = seconds;
+	} 
+	if (seconds > 59) {
+		minutes++;
+		minutesElement.innerText = '0' + minutes;
+		seconds = 0;
+		secondsElement.innerText = '0' + seconds;
+	}
+	if (minutes < 9) {
+		minutesElement.innerText = '0' + minutes;
+	}
+	if (minutes > 9 && minutes < 59) {
+		minutesElement.innerText = minutes;
+	} 
+}	
+

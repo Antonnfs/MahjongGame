@@ -1,4 +1,4 @@
-let cards = 2; // quantity pairs of cards. May be in range between 2 and 100, and multiple of ten ( 10, 20, 30, 40, 50...)
+let cards = 30; // quantity pairs of cards. May be in range between 2 and 100, and multiple of ten ( 10, 20, 30, 40, 50...)
 
 let seconds = 0;
 let minutes = 0;

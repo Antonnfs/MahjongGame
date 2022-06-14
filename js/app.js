@@ -19,8 +19,6 @@ const timer = document.querySelector('.timer');
 const minutesElement = document.querySelector('.timer__minutes');
 const secondsElement = document.querySelector('.timer__seconds');
 
-
-
 window.addEventListener('click', function(e) {
 	let firstCardItem = e.target.closest('.card');		// First selected card
 	let secondCardItem = e.target.closest('.card');		// Second selected card
